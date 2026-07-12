@@ -37,7 +37,32 @@ export async function POST(request: NextRequest) {
 
     const lead = response.documents[0];
 
-    // Return the lead data formatted for ElevenLabs context
+    // Query any existing or upcoming appointments for this specific lead
+    let upcomingAppointments: any[] = [];
+    try {
+      const appointmentsResponse = await serverDatabases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_IDS.APPOINTMENTS,
+        [
+          Query.equal('leadId', lead.$id),
+          Query.orderAsc('date'),
+          Query.limit(5)
+        ]
+      );
+      upcomingAppointments = appointmentsResponse.documents.map((app: any) => ({
+        id: app.$id,
+        title: app.title,
+        date: app.date,
+        startTime: app.startTime,
+        endTime: app.endTime,
+        meetingType: app.meetingType,
+        status: app.status,
+      }));
+    } catch (err) {
+      console.warn('Could not fetch appointments for lead during lookup:', err);
+    }
+
+    // Return the lead data + full appointment schedule formatted for ElevenLabs context
     return NextResponse.json({
       found: true,
       lead: {
@@ -50,6 +75,7 @@ export async function POST(request: NextRequest) {
         priority: lead.priority,
         company: lead.company,
         appointmentsCount: lead.appointmentsCount,
+        upcomingAppointments,
       },
     });
   } catch (error: any) {
