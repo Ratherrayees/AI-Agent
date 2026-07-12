@@ -1,0 +1,19 @@
+{
+  "name": "workflows",
+  "version": "1.0.0",
+  "description": "Appwrite function for CRM Event Workflows, Notifications & Scheduled Jobs",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "node-appwrite": "^14.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
