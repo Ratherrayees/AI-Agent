@@ -6,7 +6,7 @@
 export const APPWRITE_CONFIG = {
   endpoint:
     process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1',
-  projectId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '',
+  projectId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || 'stateai-crm',
 } as const;
 
 export const DATABASE_ID = 'stateai_crm';
