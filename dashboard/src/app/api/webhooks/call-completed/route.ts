@@ -61,6 +61,18 @@ export async function POST(request: NextRequest) {
 
     const now = new Date().toISOString();
 
+    // Clean and format transcript / summaries to fit safely within Appwrite attribute limits
+    let formattedTranscript = '';
+    if (Array.isArray(transcript)) {
+      formattedTranscript = transcript.map((t: any) => `${t.role ? t.role.toUpperCase() : 'SPEAKER'}: ${t.message || t.text || ''}`).join('\n');
+    } else if (typeof transcript === 'string') {
+      formattedTranscript = transcript;
+    } else if (transcript) {
+      formattedTranscript = JSON.stringify(transcript);
+    }
+    const safeTranscript = formattedTranscript ? formattedTranscript.slice(0, 3400) : undefined;
+    const safeSummary = typeof summary === 'string' ? summary.slice(0, 1400) : summary ? JSON.stringify(summary).slice(0, 1400) : undefined;
+
     // 1. Create Conversation record
     const conversation = await serverDatabases.createDocument(
       DATABASE_ID,
@@ -75,12 +87,12 @@ export async function POST(request: NextRequest) {
         startedAt: new Date(Date.now() - (duration * 1000)).toISOString(),
         endedAt: now,
         durationSeconds: duration,
-        summary,
-        aiSummary: summary,
-        sentiment,
-        outcome,
-        recordingUrl,
-        transcript,
+        summary: safeSummary,
+        aiSummary: safeSummary,
+        sentiment: typeof sentiment === 'string' ? sentiment.slice(0, 95) : 'neutral',
+        outcome: typeof outcome === 'string' ? outcome.slice(0, 250) : 'completed',
+        recordingUrl: typeof recordingUrl === 'string' ? recordingUrl.slice(0, 950) : undefined,
+        transcript: safeTranscript,
       }
     );
 

@@ -89,12 +89,12 @@ async function main() {
   await createAttr('conversations', 'endedAt', 'string', 100, false);
   await createAttr('conversations', 'duration', 'integer', 0, false);
   await createAttr('conversations', 'durationSeconds', 'integer', 0, false);
-  await createAttr('conversations', 'summary', 'string', 5000, false);
-  await createAttr('conversations', 'aiSummary', 'string', 5000, false);
+  await createAttr('conversations', 'summary', 'string', 1500, false);
+  await createAttr('conversations', 'aiSummary', 'string', 1500, false);
   await createAttr('conversations', 'sentiment', 'string', 100, false);
   await createAttr('conversations', 'outcome', 'string', 255, false);
   await createAttr('conversations', 'recordingUrl', 'string', 1000, false);
-  await createAttr('conversations', 'transcript', 'string', 10000, false);
+  await createAttr('conversations', 'transcript', 'string', 3500, false);
 
   // 3. Campaigns
   console.log('\n--- Campaigns ---');
@@ -164,9 +164,9 @@ async function main() {
   // 8. AI Agents
   console.log('\n--- AI Agents ---');
   await createAttr('ai_agents', 'name', 'string', 255, false);
-  await createAttr('ai_agents', 'description', 'string', 5000, false);
+  await createAttr('ai_agents', 'description', 'string', 1500, false);
   await createAttr('ai_agents', 'voiceId', 'string', 100, false);
-  await createAttr('ai_agents', 'prompt', 'string', 10000, false);
+  await createAttr('ai_agents', 'prompt', 'string', 4000, false);
   await createAttr('ai_agents', 'status', 'string', 50, false);
   await createAttr('ai_agents', 'language', 'string', 50, false);
 
