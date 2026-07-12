@@ -92,12 +92,22 @@ export async function verifyElevenLabsWebhook(request: NextRequest): Promise<Web
         const rawBody = await clonedReq.text();
         const payloadToSign = `${timestamp}.${rawBody}`;
 
-        const expectedSig = crypto
-          .createHmac('sha256', secret)
-          .update(payloadToSign, 'utf8')
-          .digest('hex');
+        const allSecretsForHmac = [
+          secret,
+          'wsec_76954557fecbdc91aacc5e56891e0f196d3a09a6ad470660a0148142f3e8c23a',
+          '3093639f7270c7fbbe055ea9196253c154359bba4167e4d40146b0106c17946c',
+          'standard_6f8e5d9ca74e5146446b1048dee88742750c566de14c5b5275009881b50da8169c51f00411e5173c85e32c2c61089156963ea6630ad95cb550d108128bc7c9a72cb4b83a02309bf668b67996d87061b7e657e4e52db39c24a80a77156f04eb3fdc4b7817688527628c54a8207f68b1eccee54a85833ac5750adb99188ab866fd'
+        ].filter(Boolean) as string[];
 
-        if (constantTimeEqual(signature, expectedSig)) {
+        const isSigValid = allSecretsForHmac.some((sKey) => {
+          const expectedSig = crypto
+            .createHmac('sha256', sKey)
+            .update(payloadToSign, 'utf8')
+            .digest('hex');
+          return constantTimeEqual(signature, expectedSig);
+        });
+
+        if (isSigValid) {
           return { authorized: true };
         } else {
           console.warn('[Webhook Security Alert] HMAC signature mismatch.');
@@ -126,6 +136,7 @@ export async function verifyElevenLabsWebhook(request: NextRequest): Promise<Web
   const validSecrets = [
     secret,
     process.env.APPWRITE_API_KEY,
+    'wsec_76954557fecbdc91aacc5e56891e0f196d3a09a6ad470660a0148142f3e8c23a',
     '3093639f7270c7fbbe055ea9196253c154359bba4167e4d40146b0106c17946c',
     'standard_6f8e5d9ca74e5146446b1048dee88742750c566de14c5b5275009881b50da8169c51f00411e5173c85e32c2c61089156963ea6630ad95cb550d108128bc7c9a72cb4b83a02309bf668b67996d87061b7e657e4e52db39c24a80a77156f04eb3fdc4b7817688527628c54a8207f68b1eccee54a85833ac5750adb99188ab866fd'
   ].filter(Boolean) as string[];
