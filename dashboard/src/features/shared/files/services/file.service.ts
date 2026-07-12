@@ -15,25 +15,27 @@ export const fileService = {
     return response.documents as unknown as FileRecord[];
   },
 
-  async uploadFile(file: File, entityType: string, entityId: string, uploaderId: string): Promise<FileRecord> {
-    // 1. Upload to storage bucket
+  async uploadFile(file: File, entityType: string, entityId: string, uploaderId: string, category: string = 'document'): Promise<FileRecord> {
+    // 1. Upload to single master storage bucket
+    const targetBucket = BUCKET_IDS.DOCUMENTS;
     const uploadedFile = await storage.createFile(
-      BUCKET_IDS.DOCUMENTS,
+      targetBucket,
       ID.unique(),
       file
     );
 
-    // 2. Create DB record for metadata and relationship
+    // 2. Create DB record for metadata, category tagging, and relationship
     const fileRecord = await databases.createDocument(
       DATABASE_ID,
       COLLECTION_IDS.FILES,
       ID.unique(),
       {
         name: file.name,
-        bucketId: BUCKET_IDS.DOCUMENTS,
+        bucketId: targetBucket,
         fileId: uploadedFile.$id,
         mimeType: file.type,
         size: file.size,
+        category: category,
         [entityType]: entityId,
         uploadedById: uploaderId,
       }

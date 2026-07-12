@@ -31,8 +31,8 @@ export const COLLECTION_IDS = {
 } as const;
 
 export const BUCKET_IDS = {
-  DOCUMENTS: 'documents',
-  IMAGES: 'images',
-  AUDIO: 'audio',
-  RECORDINGS: 'recordings',
+  DOCUMENTS: process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'crm_storage',
+  IMAGES: process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'crm_storage',
+  AUDIO: process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'crm_storage',
+  RECORDINGS: process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || 'crm_storage',
 } as const;
