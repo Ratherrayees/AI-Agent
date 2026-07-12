@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
         firstName: firstName || 'New',
         lastName: lastName || 'Lead',
         phone: cleanPhone,
-        email: email || '',
+        email: email || `unknown_${cleanPhone}@example.com`,
         leadStatus,
         priority,
         description: description || 'Created dynamically by ElevenLabs AI Voice Agent during phone call.',
