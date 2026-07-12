@@ -13,11 +13,60 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { leadId, title, date, startTime, endTime, meetingType = 'in_person', location, description } = body;
+    const { action = 'create', appointmentId, leadId, title, date, startTime, endTime, meetingType = 'in_person', location, description } = body;
 
+    // --- HANDLE CANCEL ACTION ---
+    if (action === 'cancel') {
+      if (!appointmentId) {
+        return NextResponse.json({ error: 'appointmentId is required when canceling an appointment' }, { status: 400 });
+      }
+      const updatedAppt = await serverDatabases.updateDocument(
+        DATABASE_ID,
+        COLLECTION_IDS.APPOINTMENTS,
+        appointmentId,
+        { status: 'cancelled' }
+      );
+      return NextResponse.json({
+        success: true,
+        message: `Appointment ${appointmentId} successfully cancelled.`,
+        appointment: { id: updatedAppt.$id, status: 'cancelled' }
+      });
+    }
+
+    // --- HANDLE RESCHEDULE ACTION ---
+    if (action === 'reschedule') {
+      if (!appointmentId || !date || !startTime || !endTime) {
+        return NextResponse.json({ error: 'appointmentId, date, startTime, and endTime are required when rescheduling' }, { status: 400 });
+      }
+      const updatedAppt = await serverDatabases.updateDocument(
+        DATABASE_ID,
+        COLLECTION_IDS.APPOINTMENTS,
+        appointmentId,
+        {
+          date,
+          startTime,
+          endTime,
+          status: 'scheduled',
+          ...(title && { title }),
+          ...(location && { location }),
+        }
+      );
+      return NextResponse.json({
+        success: true,
+        message: `Appointment successfully rescheduled to ${date} at ${startTime}.`,
+        appointment: {
+          id: updatedAppt.$id,
+          date: updatedAppt.date,
+          startTime: updatedAppt.startTime,
+          confirmationMessage: `Your appointment is rescheduled for ${date} at ${startTime}.`
+        }
+      });
+    }
+
+    // --- HANDLE CREATE ACTION (Default) ---
     if (!leadId || !date || !startTime || !endTime) {
       return NextResponse.json(
-        { error: 'leadId, date, startTime, and endTime are required' },
+        { error: 'leadId, date, startTime, and endTime are required for creating an appointment' },
         { status: 400 }
       );
     }
@@ -30,11 +79,11 @@ export async function POST(request: NextRequest) {
     );
 
     // 2. Create the appointment
-    const appointmentId = ID.unique();
+    const newAppointmentId = ID.unique();
     const appointment = await serverDatabases.createDocument(
       DATABASE_ID,
       COLLECTION_IDS.APPOINTMENTS,
-      appointmentId,
+      newAppointmentId,
       {
         title: title || `Showing for ${lead.firstName} ${lead.lastName}`,
         description,
@@ -45,7 +94,7 @@ export async function POST(request: NextRequest) {
         date,
         startTime,
         endTime,
-        timezone: 'UTC', // Could pass this from the agent
+        timezone: 'UTC',
         location,
         createdById: 'ai_agent',
       }
@@ -74,7 +123,7 @@ export async function POST(request: NextRequest) {
         title: 'Appointment Booked via AI',
         description: `AI Agent scheduled an appointment for ${date} at ${startTime}.`,
         leadId,
-        metadata: JSON.stringify({ appointmentId })
+        metadata: JSON.stringify({ appointmentId: newAppointmentId })
       }
     );
 
