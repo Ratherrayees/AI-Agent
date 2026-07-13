@@ -2,9 +2,9 @@
  * Application-wide constants
  */
 
-export const APP_NAME = 'StateAI CRM';
+export const APP_NAME = "Ru'a by StateAI";
 export const APP_DESCRIPTION =
-  'AI-powered CRM for real estate agencies, integrated with Autonomous AI Voice Agents.';
+  "Autonomous AI Voice & Text Assistant that talks and sounds like a human, paired with an intelligent CRM dashboard by StateAI.";
 export const APP_VERSION = '1.0.0';
 
 export const DEFAULT_PAGE_SIZE = 20;

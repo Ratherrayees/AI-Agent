@@ -2,8 +2,8 @@ import { LoginForm } from '@/features/auth/components/login-form';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Login - StateAI CRM',
-  description: 'Login to your account',
+  title: "Login - Ru'a by StateAI",
+  description: "Login to Ru'a Voice & Text Assistant CRM",
 };
 
 export default function LoginPage() {

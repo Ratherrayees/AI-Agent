@@ -4,8 +4,8 @@ import { CallVolumeChartDynamic as CallVolumeChart } from '@/features/analytics/
 import { RecentActivityFeed } from '@/features/analytics/components/recent-activity-feed';
 
 export const metadata: Metadata = {
-  title: 'Dashboard - StateAI CRM',
-  description: 'AI CRM Dashboard Overview',
+  title: "Dashboard - Ru'a by StateAI",
+  description: "AI Voice & Text Assistant CRM Dashboard Overview",
 };
 
 export default function DashboardPage() {
@@ -14,7 +14,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
         <p className="text-muted-foreground">
-          Welcome to StateAI CRM. Here is what is happening with your leads and AI agents.
+          Welcome to Ru&apos;a by StateAI. Here is what is happening with your leads and AI assistant.
         </p>
       </div>
       
