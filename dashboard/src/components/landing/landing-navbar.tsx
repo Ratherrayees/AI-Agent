@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Waves, ArrowRight, Menu, X } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, Menu, X } from 'lucide-react';
+import ruaLogo from '../../../../assets/Rua-logo.png';
 
 const NAVBAR_BOTTOM_OFFSET = 80; // top-4 (16px) + h-16 (64px)
 
@@ -38,26 +40,24 @@ export function LandingNavbar() {
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4 sm:px-6">
-      <div className="pointer-events-auto relative flex items-center justify-between w-full max-w-[1100px] h-16 rounded-[100px] border-[1.1px] border-black/[0.12] bg-transparent px-6 transition-all duration-300">
+      <div className="pointer-events-auto relative flex items-center justify-between w-full max-w-[1100px] h-16 rounded-[100px] border-[1.1px] border-black/[0.12] bg-black px-6 transition-all duration-300">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#3e3ef4] text-white shadow-md shadow-[#3e3ef4]/30 group-hover:scale-105 transition-transform">
-            <Waves className="w-4 h-4" />
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+          <div
+            className={`relative h-[38px] w-[171px] sm:h-[42px] sm:w-[209px] overflow-hidden rounded-lg transition-all duration-300 group-hover:scale-[1.02] ${
+              isOverHero ? '' : 'shadow-sm ring-1 ring-black/[0.06]'
+            }`}
+          >
+            <Image
+              src={ruaLogo}
+              alt="Ru'a"
+              priority
+              fill
+              sizes="(max-width: 640px) 171px, 209px"
+              className="object-cover object-center scale-[1.215]"
+            />
           </div>
-          <div className="flex items-center gap-2">
-            <span
-              className={`font-extrabold text-2xl tracking-tight transition-colors duration-300 ${
-                isOverHero ? 'text-white' : 'text-slate-900'
-              }`}
-            >
-              Ru&apos;a
-            </span>
-            <span
-              className={`hidden sm:inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase tracking-wider font-mono ${darkPillClass}`}
-            >
-              by StateAI
-            </span>
-          </div>
+          
         </Link>
 
         {/* Desktop Navigation Links */}
