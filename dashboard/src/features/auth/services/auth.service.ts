@@ -2,13 +2,47 @@ import { account } from '@/lib/appwrite';
 import { User, Session } from '../types';
 import { APPWRITE_CONFIG } from '@/lib/appwrite/config';
 
+let sharedMePromise: Promise<any> | null = null;
+
+async function getMeData() {
+  if (sharedMePromise) return sharedMePromise;
+  sharedMePromise = (async () => {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+      const res = await fetch('/api/auth/me', {
+        headers: { 'Cache-Control': 'no-cache' },
+        credentials: 'include',
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success) {
+          return data;
+        }
+      }
+    } catch (err) {
+      // ignore (includes abort on timeout)
+    } finally {
+      sharedMePromise = null;
+    }
+    return null;
+  })();
+  return sharedMePromise;
+}
+
 export const authService = {
   async getCurrentUser(): Promise<User | null> {
     try {
       if (!APPWRITE_CONFIG.projectId) {
         return null;
       }
-      return (await account.get()) as User;
+      const me = await getMeData();
+      if (me && me.user) {
+        return me.user as User;
+      }
+      return null;
     } catch (error) {
       return null;
     }
@@ -19,7 +53,11 @@ export const authService = {
       if (!APPWRITE_CONFIG.projectId) {
         return null;
       }
-      return await account.getSession('current');
+      const me = await getMeData();
+      if (me && me.session) {
+        return me.session as Session;
+      }
+      return null;
     } catch (error) {
       return null;
     }
@@ -39,6 +77,12 @@ export const authService = {
       }
     } catch (error) {
       console.error('Logout failed', error);
+    } finally {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch (err) {
+        // ignore
+      }
     }
   },
 
@@ -48,3 +92,4 @@ export const authService = {
     }
   },
 };
+

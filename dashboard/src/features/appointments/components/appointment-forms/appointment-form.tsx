@@ -122,7 +122,8 @@ export function AppointmentForm({ initialData, onSubmit, isLoading }: Appointmen
                 <Select
                   disabled={isLoading}
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value || ''}
+                  defaultValue={field.value || ''}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -151,7 +152,8 @@ export function AppointmentForm({ initialData, onSubmit, isLoading }: Appointmen
                 <Select
                   disabled={isLoading}
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value || ''}
+                  defaultValue={field.value || ''}
                 >
                   <FormControl>
                     <SelectTrigger>

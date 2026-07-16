@@ -146,6 +146,7 @@ export interface Campaign extends Models.Document {
   type: 'outbound_call' | 'sms' | 'email';
   status: CampaignStatus;
   aiAgentId: string;
+  promptOverride?: string;
   assignedUserId?: string;
   timezone: string;
   businessHoursId?: string;

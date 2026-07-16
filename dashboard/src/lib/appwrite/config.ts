@@ -28,6 +28,7 @@ export const COLLECTION_IDS = {
   AUDIT_LOGS: 'audit_logs',
   FILES: 'files',
   AI_AGENTS: 'ai_agents',
+  PROPERTIES: 'properties',
 } as const;
 
 export const BUCKET_IDS = {

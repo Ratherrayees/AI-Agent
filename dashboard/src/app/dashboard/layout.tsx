@@ -17,7 +17,10 @@ export default function DashboardLayoutWrapper({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+      const timer = setTimeout(() => {
+        window.location.href = '/login';
+      }, 50);
+      return () => clearTimeout(timer);
     }
   }, [isLoading, isAuthenticated, router, pathname]);
 

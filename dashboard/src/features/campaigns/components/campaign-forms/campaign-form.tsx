@@ -80,7 +80,8 @@ export function CampaignForm({ initialData, onSubmit, isLoading }: CampaignFormP
                 <Select
                   disabled={isLoading}
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value || ''}
+                  defaultValue={field.value || ''}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -107,7 +108,8 @@ export function CampaignForm({ initialData, onSubmit, isLoading }: CampaignFormP
                 <Select
                   disabled={isLoading}
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value || ''}
+                  defaultValue={field.value || ''}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -155,21 +157,45 @@ export function CampaignForm({ initialData, onSubmit, isLoading }: CampaignFormP
           />
         </div>
 
-        {isSuperAdmin && (
-          <div className="space-y-4 border-t pt-4">
-            <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">Autonomous Voice Model Configuration [Admin Only]</h4>
+        <div className="space-y-4 border-t pt-4 bg-muted/20 p-4 rounded-xl border border-border/60">
+            <h4 className="font-semibold text-xs text-primary uppercase tracking-wider flex items-center gap-1.5">
+              <span>Autonomous Voice Model Configuration</span>
+              <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">AI Agent Setup</span>
+            </h4>
             
             <FormField
               control={form.control}
               name="aiAgentId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Voice Model Profile ID</FormLabel>
-                  <FormControl>
-                    <Input placeholder="voice_model_xxxxxx" disabled={isLoading} {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Assign the specific conversational AI voice model profile to automate outbound calls for this campaign.
+                  <FormLabel className="text-sm font-semibold">Select Voice Agent Model *</FormLabel>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={(val) => {
+                      field.onChange(val);
+                    }}
+                    value={field.value || 'agent_0801kxfte8gwe8sstnppq2k5mf4z'}
+                    defaultValue={field.value || 'agent_0801kxfte8gwe8sstnppq2k5mf4z'}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="bg-background font-medium">
+                        <SelectValue placeholder="Select an Autonomous Voice Agent" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="agent_0801kxfte8gwe8sstnppq2k5mf4z" className="font-medium">
+                        🤖 StateAI Outbound Sales Specialist (VIP Villa Tour & Qualification) [Recommended]
+                      </SelectItem>
+                      <SelectItem value="agent_0801kxfrx9xbe8s8fcyz2k9m">
+                        🏛️ Luxury Property & Estate Consultant (High-Ticket Buyers)
+                      </SelectItem>
+                      <SelectItem value="agent_0902kxftx8ewe8sstnppq2k5">
+                        📞 Real Estate Follow-up Specialist & Appointment Setter
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription className="text-xs">
+                    Choose the pre-trained conversational AI voice agent profile that will conduct your phone calls.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -181,24 +207,48 @@ export function CampaignForm({ initialData, onSubmit, isLoading }: CampaignFormP
               name="promptOverride"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Campaign Prompt Override</FormLabel>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <FormLabel className="text-sm font-semibold">Campaign Prompt Override</FormLabel>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(`[Standard Outbound Protocol]\nAgent will introduce StateAI Realty, verify lead qualification criteria (budget, move-in timeline, location preference inside downtown/villas), and attempt to schedule an on-site villa tour.`)}
+                        className="text-[11px] px-2 py-1 rounded-md bg-primary/10 text-primary hover:bg-primary/20 font-medium transition-colors border border-primary/20"
+                      >
+                        ⚡ Preset: VIP Villa Tour
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(`[Investor Outreach Protocol]\nAgent will introduce new off-plan luxury villa launch with 10% down payment and 8% guaranteed ROI. Verify investor readiness and schedule a private meeting with senior investment advisors.`)}
+                        className="text-[11px] px-2 py-1 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 font-medium transition-colors border border-blue-500/20"
+                      >
+                        🏢 Preset: Off-Plan Investor
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(`[Warm Follow-Up Protocol]\nCheck in with lead regarding past property inquiry. Ask if they are still actively searching in the market or have already purchased. Offer exclusive private listings.`)}
+                        className="text-[11px] px-2 py-1 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 font-medium transition-colors border border-amber-500/20"
+                      >
+                        📅 Preset: Warm Follow-up
+                      </button>
+                    </div>
+                  </div>
                   <FormControl>
                     <Textarea 
-                      placeholder="Specific instructions for the AI voice model for this campaign..." 
-                      className="min-h-[100px] font-mono text-sm"
+                      placeholder="Select a preset button above or type custom instructions for the AI voice model..." 
+                      className="min-h-[110px] font-mono text-xs bg-background leading-relaxed"
                       disabled={isLoading} 
                       {...field} 
                     />
                   </FormControl>
-                  <FormDescription>
-                    These instructions will dynamically customize the voice model&apos;s behavior and qualification flow during calls.
+                  <FormDescription className="text-xs">
+                    Click a preset above to auto-fill proven qualification instructions, or edit directly in the text box.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-        )}
 
         <FormField
           control={form.control}

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Menu, X } from 'lucide-react';
-import ruaLogo from '../../../../assets/Rua-logo.png';
 
 const NAVBAR_BOTTOM_OFFSET = 80; // top-4 (16px) + h-16 (64px)
 
@@ -49,7 +48,7 @@ export function LandingNavbar() {
             }`}
           >
             <Image
-              src={ruaLogo}
+              src="/Rua-logo.png"
               alt="Ru'a"
               priority
               fill
@@ -80,9 +79,9 @@ export function LandingNavbar() {
               Sign In
             </button>
           </Link>
-          <Link href="/dashboard">
+          <Link href="/book-a-demo">
             <button className={`px-5 py-2 text-xs flex items-center gap-1.5 cursor-pointer ${darkPillClass}`}>
-              <span>Launch CRM</span>
+              <span>Book a Demo</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </Link>
@@ -90,9 +89,9 @@ export function LandingNavbar() {
 
         {/* Mobile Menu Toggle */}
         <div className="flex md:hidden items-center gap-2">
-          <Link href="/dashboard">
+          <Link href="/book-a-demo">
             <button className="rounded-full bg-[#242424] text-white font-medium text-xs px-3.5 py-1.5">
-              Launch
+              Book a Demo
             </button>
           </Link>
           <button
@@ -129,9 +128,9 @@ export function LandingNavbar() {
                   Sign In
                 </button>
               </Link>
-              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/book-a-demo" onClick={() => setMobileMenuOpen(false)}>
                 <button className="w-full rounded-[100px] border border-white/25 bg-gradient-to-b from-[#242424] from-[19%] to-black py-2.5 text-sm font-semibold text-white">
-                  Launch CRM Dashboard
+                  Book a Demo
                 </button>
               </Link>
             </div>

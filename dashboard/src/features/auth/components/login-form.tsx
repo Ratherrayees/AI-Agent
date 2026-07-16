@@ -1,13 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { loginSchema, LoginFormData } from '../validation/auth.schema';
-import { useAuth } from '@/providers/auth-provider';
 import { authService } from '../services/auth.service';
 
 import { Button } from '@/components/ui/button';
@@ -24,8 +22,6 @@ import { APP_NAME } from '@/constants';
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const { checkAuth } = useAuth();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -35,13 +31,41 @@ export function LoginForm() {
     },
   });
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get('email');
+    const passwordParam = params.get('password');
+    const errorParam = params.get('error');
+
+    if (emailParam) form.setValue('email', emailParam);
+    if (passwordParam) form.setValue('password', passwordParam);
+    if (errorParam) toast.error(errorParam);
+
+    if (emailParam || passwordParam || errorParam) {
+      window.history.replaceState({}, document.title, '/login');
+    }
+  }, [form]);
+
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
     try {
-      await authService.login(data.email, data.password);
-      await checkAuth(); // Refresh auth state
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      });
+      const serverData = await res.json();
+
+      if (!res.ok || !serverData.success) {
+        throw new Error(serverData.error || 'Failed to login. Please check your credentials.');
+      }
+
+      authService.login(data.email, data.password).catch(() => {});
+
       toast.success('Login successful');
-      router.push('/dashboard');
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 50);
     } catch (error: any) {
       toast.error(error.message || 'Failed to login. Please check your credentials.');
     } finally {
@@ -84,9 +108,7 @@ export function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <div className="flex items-center justify-between">
-                  <FormLabel>Password</FormLabel>
-                </div>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="••••••••"

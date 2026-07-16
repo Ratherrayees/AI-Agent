@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Lead } from '@/types';
 import { Button } from '@/components/ui/button';
 import { LeadStatusBadge } from '../lead-status-badge';
-import { Mail, Phone, Calendar, ArrowLeft, MoreHorizontal } from 'lucide-react';
+import { Mail, Phone, Calendar, ArrowLeft, MoreHorizontal, PhoneCall, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -15,6 +16,45 @@ interface LeadHeaderProps {
 }
 
 export function LeadHeader({ lead }: LeadHeaderProps) {
+  const [isCalling, setIsCalling] = useState(false);
+  const [callStatus, setCallStatus] = useState<string | null>(null);
+
+  const triggerAIOutboundCall = async () => {
+    if (!lead.phone) {
+      alert('This lead has no phone number.');
+      return;
+    }
+    if (!confirm(`Trigger ElevenLabs AI Outbound Call via Twilio to ${lead.firstName} ${lead.lastName} (${lead.phone})?`)) {
+      return;
+    }
+
+    setIsCalling(true);
+    setCallStatus(null);
+    try {
+      const res = await fetch('/api/agents/outbound-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: lead.phone,
+          leadId: lead.$id,
+          clientName: `${lead.firstName} ${lead.lastName}`
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCallStatus('Call Initiated!');
+        alert(`✅ Outbound AI call triggered successfully to ${lead.phone}!`);
+      } else {
+        alert(`❌ Failed to trigger call: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err: any) {
+      alert(`❌ Error triggering call: ${err.message || err}`);
+    } finally {
+      setIsCalling(false);
+      setTimeout(() => setCallStatus(null), 4000);
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card p-6 rounded-lg border">
       <div className="flex flex-col gap-2">
@@ -26,6 +66,11 @@ export function LeadHeader({ lead }: LeadHeaderProps) {
             {lead.firstName} {lead.lastName}
           </h1>
           <LeadStatusBadge status={lead.leadStatus} />
+          {callStatus && (
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+              {callStatus}
+            </span>
+          )}
         </div>
         
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground ml-8">
@@ -56,6 +101,26 @@ export function LeadHeader({ lead }: LeadHeaderProps) {
       </div>
       
       <div className="flex items-center gap-2 ml-8 md:ml-0">
+        {lead.phone && (
+          <Button 
+            variant="default" 
+            className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+            onClick={triggerAIOutboundCall}
+            disabled={isCalling}
+          >
+            {isCalling ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Calling...
+              </>
+            ) : (
+              <>
+                <PhoneCall className="h-4 w-4 mr-2" />
+                Call AI Agent
+              </>
+            )}
+          </Button>
+        )}
         <Button variant="outline">
           <Mail className="h-4 w-4 mr-2" />
           Email

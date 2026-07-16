@@ -15,6 +15,14 @@ export function RecentActivityFeed() {
     async function fetchActivities() {
       try {
         setIsLoading(true);
+        const serverRes = await fetch('/api/analytics/activities');
+        if (serverRes.ok) {
+          const data = await serverRes.json();
+          if (data && data.success && data.activities) {
+            setActivities(data.activities as Activity[]);
+            return;
+          }
+        }
         const res = await databases.listDocuments(
           DATABASE_ID,
           COLLECTION_IDS.ACTIVITIES,

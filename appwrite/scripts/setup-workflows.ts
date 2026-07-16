@@ -75,40 +75,64 @@ async function setupWorkflows() {
   const sampleWorkflows = [
     {
       name: 'Instant AI Voice Qualification on New Lead',
-      description: 'Automatically triggers the ElevenLabs AI Voice Agent to call and qualify new leads within 60 seconds.',
+      description: 'Automatically triggers the ElevenLabs Outbound Sales Specialist (`outbound_sales`) to call and qualify new leads within 60 seconds.',
       status: 'active',
       triggerJson: JSON.stringify({
         type: 'lead_created',
-        conditions: [{ field: 'leadSource', operator: 'equals', value: 'Website' }]
+        conditions: [{ field: 'leadSource', operator: 'in', value: ['Website', 'Facebook/Instagram', 'Google Ads'] }]
       }),
       actionsJson: JSON.stringify([
-        { id: '1', type: 'trigger_webhook', config: { url: 'https://api.elevenlabs.io/v1/agent/call', agentId: 'agent_elevenlabs_realestate_1' } },
+        { id: '1', type: 'trigger_webhook', config: { url: 'https://api.elevenlabs.io/v1/agent/call', agentRole: 'outbound_sales' } },
         { id: '2', type: 'update_lead', config: { leadStatus: 'contacted' } }
       ])
     },
     {
-      name: 'VIP Showing Confirmed - Welcome Email & Task',
-      description: 'Sends a customized property brochure and schedules an internal preparation task when an appointment is booked.',
+      name: '24-Hour Site Visit Reminder Call',
+      description: 'Automatically dispatches the ElevenLabs Outbound Coordinator (`outbound_coordinator`) 24 hours before an appointment to confirm or reschedule.',
       status: 'active',
       triggerJson: JSON.stringify({
-        type: 'appointment_booked',
-        conditions: []
+        type: 'appointment_reminder_24h',
+        conditions: [{ field: 'status', operator: 'equals', value: 'scheduled' }]
       }),
       actionsJson: JSON.stringify([
-        { id: '1', type: 'send_email', config: { subject: 'Confirmed: Your Exclusive Property Showing', template: 'vip_showing' } },
-        { id: '2', type: 'create_task', config: { title: 'Prepare physical brochure and site access keys', priority: 'high' } }
+        { id: '1', type: 'trigger_webhook', config: { url: 'https://api.elevenlabs.io/v1/agent/call', agentRole: 'outbound_coordinator' } }
       ])
     },
     {
-      name: 'High-Priority Investor Alert SMS',
-      description: 'Dispatches an urgent SMS alert to the assigned real estate agent whenever a lead priority escalates to High.',
+      name: 'Missed Appointment Recovery Call',
+      description: 'Automatically triggers the Outbound Coordinator within 2 hours of a no-show to reschedule.',
+      status: 'active',
+      triggerJson: JSON.stringify({
+        type: 'appointment_missed',
+        conditions: [{ field: 'status', operator: 'equals', value: 'no_show' }]
+      }),
+      actionsJson: JSON.stringify([
+        { id: '1', type: 'trigger_webhook', config: { url: 'https://api.elevenlabs.io/v1/agent/call', agentRole: 'outbound_coordinator' } }
+      ])
+    },
+    {
+      name: 'Post-Showing Customer Satisfaction Survey (NPS)',
+      description: 'Triggers the Customer Care Specialist (`outbound_support`) 2 hours after a completed site visit to collect NPS ratings.',
+      status: 'active',
+      triggerJson: JSON.stringify({
+        type: 'appointment_completed',
+        conditions: [{ field: 'status', operator: 'equals', value: 'completed' }]
+      }),
+      actionsJson: JSON.stringify([
+        { id: '1', type: 'trigger_webhook', config: { url: 'https://api.elevenlabs.io/v1/agent/call', agentRole: 'outbound_support' } }
+      ])
+    },
+    {
+      name: 'High-Priority Investor & Urgent Complaint Alert',
+      description: 'Dispatches urgent SMS and email alerts to management whenever a lead priority escalates to High or a detractor NPS is logged.',
       status: 'active',
       triggerJson: JSON.stringify({
         type: 'lead_updated',
         conditions: [{ field: 'priority', operator: 'equals', value: 'high' }]
       }),
       actionsJson: JSON.stringify([
-        { id: '1', type: 'send_email', config: { subject: 'URGENT: High Priority Investor Activity', recipient: 'agent@stateai.com' } }
+        { id: '1', type: 'send_email', config: { subject: 'URGENT: High Priority Lead / Complaint Alert', recipient: 'management@stateai.com' } },
+        { id: '2', type: 'create_task', config: { title: 'Immediate Manager Callback Required', priority: 'high' } }
       ])
     }
   ];

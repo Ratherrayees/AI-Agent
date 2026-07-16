@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { leadId, leadStatus, priority, description } = body;
+    const { leadId, leadStatus, priority, description, tags, email } = body;
 
     if (!leadId) {
       return NextResponse.json(
@@ -26,6 +26,14 @@ export async function POST(request: NextRequest) {
     if (leadStatus) updates.leadStatus = leadStatus;
     if (priority) updates.priority = priority;
     if (description) updates.description = description;
+    if (email) updates.email = email;
+    if (tags) {
+      if (Array.isArray(tags)) {
+        updates.tags = tags;
+      } else if (typeof tags === 'string') {
+        updates.tags = tags.split(',').map((t: string) => t.trim()).filter(Boolean);
+      }
+    }
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ success: true, updatedFields: [] });

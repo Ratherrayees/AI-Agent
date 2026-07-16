@@ -5,7 +5,8 @@
   "scripts": {
     "setup": "tsx scripts/setup.ts",
     "attributes": "tsx scripts/run-attributes.ts",
-    "seed": "tsx scripts/seed.ts",
+    "setup:agents": "tsx scripts/setup-elevenlabs-agents.ts",
+    "setup:properties": "tsx scripts/setup-properties-collection.ts",
     "teardown": "tsx scripts/teardown.ts"
   },
   "dependencies": {
