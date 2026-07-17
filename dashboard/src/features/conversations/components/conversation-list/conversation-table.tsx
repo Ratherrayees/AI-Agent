@@ -103,9 +103,9 @@ export function ConversationTable() {
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer"
                   onClick={(e) => {
-                    // Don't trigger if clicking on the checkbox
+                    // Don't trigger if clicking on a link or checkbox
                     const target = e.target as HTMLElement;
-                    if (target.closest('button[role="checkbox"]') || target.tagName === 'INPUT') {
+                    if (target.closest('a') || target.closest('button[role="checkbox"]') || target.tagName === 'INPUT') {
                       return;
                     }
                     setSelectedConversation(row.original);

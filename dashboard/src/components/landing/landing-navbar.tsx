@@ -15,9 +15,10 @@ export function LandingNavbar() {
   const [isOverHero, setIsOverHero] = useState(true);
 
   const navItems = [
-    { label: 'Capabilities', href: '#capabilities' },
-    { label: 'Pricing & Top-Ups', href: '#pricing' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Capabilities', href: '/#capabilities' },
+    { label: 'How It Works', href: '/#how-it-works' },
+    { label: 'Pricing & Top-Ups', href: '/#pricing' },
+    { label: 'FAQ', href: '/#faq' },
   ];
 
   useEffect(() => {
@@ -60,12 +61,12 @@ export function LandingNavbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-2.5">
+        <nav className="hidden md:flex items-center gap-1.5">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className={`px-5 py-2 text-xs ${darkPillClass}`}
+              className="px-4 py-2 text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 rounded-[100px] transition-all"
             >
               {item.label}
             </a>
@@ -96,11 +97,7 @@ export function LandingNavbar() {
           </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`p-2 rounded-full transition-colors duration-300 ${
-              isOverHero
-                ? 'text-white hover:text-white/70'
-                : 'text-slate-900 hover:bg-slate-100'
-            }`}
+            className="p-2 rounded-full transition-colors duration-300 text-white hover:text-white/70 hover:bg-white/10"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

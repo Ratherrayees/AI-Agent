@@ -88,21 +88,21 @@ export function CompanySettingsForm() {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="website"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Website</FormLabel>
+                <FormControl>
+                  <Input placeholder="https://acme.com" disabled={isPending} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="website"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Website</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://acme.com" disabled={isPending} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
             <FormField
               control={form.control}
               name="supportEmail"
@@ -111,6 +111,20 @@ export function CompanySettingsForm() {
                   <FormLabel>Support Email</FormLabel>
                   <FormControl>
                     <Input placeholder="support@acme.com" disabled={isPending} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="supportPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Support Phone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="+1 (555) 000-1234" disabled={isPending} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

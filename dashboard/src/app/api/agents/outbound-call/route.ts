@@ -17,12 +17,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Ensure phone number starts with + for Twilio E.164 compliance
-    let formattedPhone = phone.trim();
-    if (!formattedPhone.startsWith('+')) {
-      // If digits only, prefix with + or assume US/International format if needed
-      formattedPhone = `+${formattedPhone.replace(/[^\d]/g, '')}`;
-    }
+    // Ensure phone number starts with + and contains only digits for Twilio E.164 compliance
+    const digitsOnly = phone.replace(/[^\d]/g, '');
+    const formattedPhone = `+${digitsOnly}`;
 
     const targetAgentId = agentId || OUTBOUND_SALES_AGENT_ID;
 

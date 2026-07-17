@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Waves, ArrowRight, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
 
 export function LandingFooter() {
   return (
@@ -48,14 +49,16 @@ export function LandingFooter() {
       {/* Main Footer Links */}
       <div className="max-w-[1150px] mx-auto px-4 sm:px-6 pt-8 border-t border-black/[0.08] grid grid-cols-1 md:grid-cols-4 gap-8 text-black">
         <div className="md:col-span-1">
-          <Link href="/" className="flex items-center gap-2.5 mb-3">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#3e3ef4] text-white shadow-xs">
-              <Waves className="w-4 h-4" />
+          <Link href="/" className="flex items-center gap-2.5 mb-3 group shrink-0">
+            <div className="relative h-[38px] w-[171px] overflow-hidden rounded-lg bg-black border border-black/10 transition-all duration-300 group-hover:scale-[1.02] shadow-sm">
+              <Image
+                src="/Rua-logo.png"
+                alt="Ru'a"
+                fill
+                sizes="171px"
+                className="object-cover object-center scale-[1.215]"
+              />
             </div>
-            <span className="font-extrabold text-xl tracking-tight text-slate-900">
-              Ru&apos;a
-            </span>
-            <span className="text-xs font-bold text-black/50 font-mono">by StateAI</span>
           </Link>
           <p className="text-xs font-light text-black/70 leading-relaxed mb-4">
             The autonomous AI voice and text assistant engineered specifically for top real estate teams and high-volume brokerages.
